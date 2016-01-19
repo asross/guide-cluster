@@ -1,5 +1,8 @@
 import csv
 import pdb
+from collections import Counter
+import numpy
+from sklearn.decomposition import PCA
 
 # norm_count_D7_Rep1
 # norm_count_D7_Rep2
@@ -34,7 +37,19 @@ sequences unsuitable.
 The off-target scores are one important feature (?) maybe
 """
 
+base_numbers = { 'C': 0, 'G': 1, 'A': 2, 'T': 3 }
+base_lists = { 'C': [0, 0], 'G': [0, 1], 'A': [1, 0], 'T': [1, 1] }
+
 with open('data/example_guide_data.tsv', 'r') as f:
     guide_data = csv.DictReader(f, delimiter='\t')
-    for row in guide_data:
-        pdb.set_trace()
+    sequences = [row['spacer_seq'] for row in guide_data]
+    #counts = Counter()
+    #for seq in sequences:
+        #for base in seq:
+            #counts[base] += 1
+    X = numpy.array([[n for base in seq for n in base_lists[base]] for seq in sequences])
+    pca = PCA(n_components='mle')
+    pca.fit(X)
+    print(pca.explained_variance_ratio_) 
+
+    pdb.set_trace()
