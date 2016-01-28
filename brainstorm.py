@@ -50,6 +50,48 @@ with open('data/example_guide_data.tsv', 'r') as f:
     X = numpy.array([[n for base in seq for n in base_lists[base]] for seq in sequences])
     pca = PCA(n_components='mle')
     pca.fit(X)
-    print(pca.explained_variance_ratio_) 
+    print(pca.explained_variance_ratio_)
 
     pdb.set_trace()
+
+
+"""
+GuideDataMunger
+    => GuideDataset
+
+GuideDataMunger will take a dataset file and a reference genome file, and it
+will output a dataset with extra features such as hairpin presence, mass,
+melting temperature, location in the reference genome, presence of off-target
+matches, etc.
+
+GuideActivityClusterer
+
+GuideActivityClusterer will take a GuideDataset and output an object with
+information about clusters in the activity of the guides. It may be able to
+return, e.g., a list of genes whose knockout seems to affect the cell in a
+meaningful way. It will be able to plot a summary of its results
+
+GuideDecisionTreeClassifier(GuideClassifier)
+
+GuideDecisionTree will take a GuideDataset (potentially a subset) and output
+a decision tree that can predict the activity of future guides. It will also
+be printable in a way that can be interpreted, hopefully common-sensically.
+
+GuideDNNClassifier(GuideClassifier)
+
+GuideDNNClassifier will take (some set of) the features of a GuideDataset and
+train a DNN to predict the activity of future guides. It will hopefully perform
+better that the GuideDecisionTree even if its underlying logic is more opaque.
+
+GuideClassifier
+
+GuideClassifier will be able to output various metrics about how well it performed for
+a given training/test set.
+
+(maybe sub classifier for regressor -- or if the clustering permits, make it boolean)
+
+All of these will probably make sense as part of an iPython notebook with inline plots.
+
+Another option is to have a script which outputs (deterministically?) some CSV/JSON files
+and loads them into a webpage for some D3ing.
+"""
