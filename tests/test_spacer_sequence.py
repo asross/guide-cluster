@@ -15,5 +15,9 @@ class TestSpacerSequence(unittest.TestCase):
         sequence = SpacerSequence('AGTGCCGCTCAATCCATCCC')
         self.assertEqual(round(sequence.molecular_mass() - 61.96), 5998)
 
+    def test_melting_temperature(self):
+        sequence = SpacerSequence('AGTGCCGCTCAATCCATCCC')
+        self.assertEqual(round(sequence.melting_temperature(), 1), 56.1)
+
 if __name__ == '__main__':
     unittest.main()
