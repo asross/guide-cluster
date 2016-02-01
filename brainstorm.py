@@ -95,3 +95,12 @@ All of these will probably make sense as part of an iPython notebook with inline
 Another option is to have a script which outputs (deterministically?) some CSV/JSON files
 and loads them into a webpage for some D3ing.
 """
+
+"""
+Spacer attributes;
+- are things like molecular mass and melting temperature really useful in any way
+if they are just simple functions of the nucleotide counts? Why not just pass in the
+nucleotide counts to the ML algorithms and have _them_ figure out the rest? That should
+give you GC content, mass, and melting temperature for free and only to the extent
+they are actually useful.
+"""

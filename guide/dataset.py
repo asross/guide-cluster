@@ -1,7 +1,7 @@
 import csv
 import numpy
 import math
-from .rna_sequence import *
+from .spacer_sequence import *
 
 """
 gene_name
@@ -45,8 +45,8 @@ class GuideDatapoint():
     def plx_activity(self):
         return activity(self.count_before(), self.plx_count_after())
 
-    def rna_sequence(self):
-        return GuideRnaSequence(self.row['spacer_seq'], self.row['gene_name'])
+    def spacer_sequence(self):
+        return SpacerSequence(self.row['spacer_seq'], self.row['gene_name'])
 
 class GuideDataset():
     def __init__(self, filename):
