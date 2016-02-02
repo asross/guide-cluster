@@ -1,8 +1,9 @@
+import math
+
 nucleotide_masses = { 'A': 313.21, 'G': 329.21, 'C': 289.18, 'T': 304.2 }
 
 # grabbed from http://biotools.nubic.northwestern.edu/OligoCalc.html
 # original source is http://www.ncbi.nlm.nih.gov/pmc/articles/PMC146261/pdf/244501.pdf
-
 neighbor_entropies = { # cal/mol/K
 'AA': 21.9,
 'AC': 25.5,
@@ -48,3 +49,10 @@ neighbor_enthalpies = { # cal/mol
 }
 
 ideal_gas_constant = 1.987 # cal/(mol*K)
+
+helix_initiation_energy = 3400 # cal
+
+# taken again from
+# http://biotools.nubic.northwestern.edu/OligoCalc.html
+# and assumes a sodium concentration of 5e-2 moles.
+sodium_melting_temperature_adjustment = 7.21 * math.log(5e-2)

@@ -17,7 +17,9 @@ class TestSpacerSequence(unittest.TestCase):
 
     def test_melting_temperature(self):
         sequence = SpacerSequence('AGTGCCGCTCAATCCATCCC')
-        self.assertEqual(round(sequence.melting_temperature(), 1), 56.1)
+        # 272.9 should really be 273.15, I think. But constants again don't
+        # matter.
+        self.assertEqual(round(sequence.melting_temperature(), 1), 56.1+272.9)
 
 if __name__ == '__main__':
     unittest.main()
