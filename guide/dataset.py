@@ -30,20 +30,18 @@ class GuideDatapoint():
         rep2 = self.get_count(key + '_Rep2')
         return (rep1 + rep2) / 2.0
 
-    def count_before(self):
-        return self.get_count('norm_count_plasmid')
-
-    def base_count_after(self):
-        return self.avg_count('norm_count_D14')
-
-    def plx_count_after(self):
-        return self.avg_count('norm_count_PLX14')
-
-    def base_activity(self):
-        return activity(self.count_before(), self.base_count_after())
-
-    def plx_activity(self):
-        return activity(self.count_before(), self.plx_count_after())
+    def d0_d14_base_activity(self):
+        return activity(self.get_count('norm_count_plasmid'), self.avg_count('norm_count_D14'))
+    def d0_d7_base_activity(self):
+        return activity(self.get_count('norm_count_plasmid'), self.avg_count('norm_count_D7'))
+    def d7_d14_base_activity(self):
+        return activity(self.avg_count('norm_count_D7'), self.avg_count('norm_count_D14'))
+    def d0_d14_plx_activity(self):
+        return activity(self.get_count('norm_count_plasmid'), self.avg_count('norm_count_PLX14'))
+    def d0_d7_plx_activity(self):
+        return activity(self.get_count('norm_count_plasmid'), self.avg_count('norm_count_PLX7'))
+    def d7_d14_plx_activity(self):
+        return activity(self.avg_count('norm_count_PLX7'), self.avg_count('norm_count_PLX14'))
 
     def spacer_sequence(self):
         return SpacerSequence(self.row['spacer_seq'], self.row['gene_name'])
@@ -57,5 +55,8 @@ class GuideDataset():
             for row in csv.DictReader(f, delimiter='\t'):
                 yield GuideDatapoint(row)
 
-    def activities(self):
-        return numpy.array([p.base_activity() for p in self.each_point()])
+    def call_each(self, key):
+        return numpy.array([getattr(p, key)() for p in self.each_point()])
+
+    def get_each(self, key):
+        return numpy.array([p.row[key] for p in self.each_point()])
