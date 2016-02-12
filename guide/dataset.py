@@ -1,7 +1,7 @@
 import csv
 import numpy
-import math
-from .spacer_sequence import *
+from .rna import *
+from .helpers import activity
 
 """
 gene_name
@@ -14,13 +14,10 @@ norm_count_PLX7_Rep1 norm_count_PLX7_Rep2
 norm_count_PLX14_Rep1 norm_count_PLX14_Rep2
 """
 
-def activity(count_before, count_after):
-    count_ratio = count_before / float(count_after)
-    return -math.log(count_ratio, 2)
-
 class GuideDatapoint():
     def __init__(self, row):
         self.row = row
+        self._guide_rna = None
 
     def get_count(self, key):
         return float(self.row[key])
@@ -32,19 +29,26 @@ class GuideDatapoint():
 
     def d0_d14_base_activity(self):
         return activity(self.get_count('norm_count_plasmid'), self.avg_count('norm_count_D14'))
+
     def d0_d7_base_activity(self):
         return activity(self.get_count('norm_count_plasmid'), self.avg_count('norm_count_D7'))
+
     def d7_d14_base_activity(self):
         return activity(self.avg_count('norm_count_D7'), self.avg_count('norm_count_D14'))
+
     def d0_d14_plx_activity(self):
         return activity(self.get_count('norm_count_plasmid'), self.avg_count('norm_count_PLX14'))
+
     def d0_d7_plx_activity(self):
         return activity(self.get_count('norm_count_plasmid'), self.avg_count('norm_count_PLX7'))
+
     def d7_d14_plx_activity(self):
         return activity(self.avg_count('norm_count_PLX7'), self.avg_count('norm_count_PLX14'))
 
-    def spacer_sequence(self):
-        return SpacerSequence(self.row['spacer_seq'], self.row['gene_name'])
+    def guide_rna(self):
+        if not self._guide_rna:
+            self._guide_rna = GuideRna(self.row['spacer_seq'], self.row['gene_name'])
+        return self._guide_rna
 
 class GuideDataset():
     def __init__(self, filename):
