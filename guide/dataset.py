@@ -1,7 +1,8 @@
 import csv
 import numpy
 from .rna import *
-from .helpers import activity
+from .helpers import activity, to_rna
+from .hairpin import *
 
 """
 gene_name
@@ -19,31 +20,49 @@ class GuideDatapoint():
         self.row = row
         self._guide_rna = None
 
-    def get_count(self, key):
+    def get_float(self, key):
         return float(self.row[key])
 
     def avg_count(self, key):
-        rep1 = self.get_count(key + '_Rep1')
-        rep2 = self.get_count(key + '_Rep2')
+        rep1 = self.get_float(key + '_Rep1')
+        rep2 = self.get_float(key + '_Rep2')
         return (rep1 + rep2) / 2.0
 
     def d0_d14_base_activity(self):
-        return activity(self.get_count('norm_count_plasmid'), self.avg_count('norm_count_D14'))
+        return activity(self.get_float('norm_count_plasmid'), self.avg_count('norm_count_D14'))
 
     def d0_d7_base_activity(self):
-        return activity(self.get_count('norm_count_plasmid'), self.avg_count('norm_count_D7'))
+        return activity(self.get_float('norm_count_plasmid'), self.avg_count('norm_count_D7'))
 
     def d7_d14_base_activity(self):
         return activity(self.avg_count('norm_count_D7'), self.avg_count('norm_count_D14'))
 
     def d0_d14_plx_activity(self):
-        return activity(self.get_count('norm_count_plasmid'), self.avg_count('norm_count_PLX14'))
+        return activity(self.get_float('norm_count_plasmid'), self.avg_count('norm_count_PLX14'))
 
     def d0_d7_plx_activity(self):
-        return activity(self.get_count('norm_count_plasmid'), self.avg_count('norm_count_PLX7'))
+        return activity(self.get_float('norm_count_plasmid'), self.avg_count('norm_count_PLX7'))
 
     def d7_d14_plx_activity(self):
         return activity(self.avg_count('norm_count_PLX7'), self.avg_count('norm_count_PLX14'))
+
+    def rna_sequence(self):
+        return to_rna(self.row['spacer_seq'])
+
+    def rna_folding_free_energy(self):
+        return self.get_float('folding_free_energy')
+
+    def rna_folding_melt_temp(self):
+        return self.get_float('folding_melt_temp')
+
+    def has_hairpin(self):
+        return self.rna_folding_free_energy() < 0
+
+    def hairpin(self):
+        if self.has_hairpin():
+            return Hairpin(self.rna_sequence(), eval(self.row['folding_hairpin']))
+        else:
+            return NullHairpin()
 
     def guide_rna(self):
         if not self._guide_rna:

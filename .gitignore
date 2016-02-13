@@ -61,3 +61,5 @@ docs/_build/
 target/
 
 tmp/
+
+data/example_guide_data_annotated.tsv

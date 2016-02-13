@@ -20,14 +20,17 @@ class TestGuideRnaFolding(unittest.TestCase):
         self.assertEqual(4, folding.hairpin_loop_length())
         self.assertEqual(4, len(folding.hairpin))
 
-    def test_all_foldable(self):
-        dataset = GuideDataset('data/example_guide_data.tsv')
-        for point in dataset.each_point():
-            try:
-                f = point.guide_rna().folding()
-            except:
-                import pdb
-                pdb.set_trace()
+    def test_double_hairpin(self):
+        folding = GuideRnaFolding('CACCGGAGGGGCGCUGUAGC')
+
+    # def test_all_foldable(self):
+        # dataset = GuideDataset('data/example_guide_data.tsv')
+        # for point in dataset.each_point():
+            # try:
+                # f = point.guide_rna().folding()
+            # except:
+                # import pdb
+                # pdb.set_trace()
 
 if __name__ == '__main__':
     unittest.main()
