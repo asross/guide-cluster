@@ -1,5 +1,9 @@
 import re
 import math
+import subprocess
+
+def output_of(cmd):
+    return subprocess.check_output(cmd, shell=True).decode('utf-8')
 
 def neighbors(sequence):
     for i in range(len(sequence) - 1):
