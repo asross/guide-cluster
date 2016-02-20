@@ -1,4 +1,5 @@
 import json
+from collections import Counter
 
 class BowtieResult():
     def __init__(self, matches):
@@ -20,9 +21,13 @@ class BowtieResult():
             if len(matches) == 1 or not matches[1].is_exact():
                 return matches[0]
 
+    def mismatch_counts(self):
+        matches = self.matches()[1:]
+        return Counter(len(m.differences) for m in matches)
+
 class BowtieMatch():
     def __init__(self, match):
-        self.is_reversed, self.chromosome, self.index, self.multiplicity, self.mismatches = match
+        self.is_reversed, self.chromosome, self.index, self.multiplicity, self.differences = match
 
     def is_exact(self):
-        return len(self.mismatches) == 0
+        return len(self.differences) == 0
