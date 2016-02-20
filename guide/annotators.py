@@ -1,4 +1,5 @@
 import csv
+import sys
 from .helpers import each_with_progress
 
 class TsvAnnotator():
@@ -22,6 +23,7 @@ class TsvAnnotator():
     def annotate(self, max_rows=float('inf')):
         with open(self.input_filename, 'r') as f1:
             with open(self.output_filename, 'w') as f2:
+                csv.field_size_limit(sys.maxsize)
                 reader = csv.DictReader(f1, delimiter='\t')
                 writer = csv.DictWriter(f2, delimiter='\t', fieldnames=self.output_fieldnames())
                 writer.writeheader()

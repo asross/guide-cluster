@@ -1,4 +1,5 @@
 import csv
+import sys
 from .datapoint import *
 
 class GuideDataset():
@@ -7,6 +8,7 @@ class GuideDataset():
 
     def each_point(self):
         with open(self.filename, 'r') as f:
+            csv.field_size_limit(sys.maxsize)
             for row in csv.DictReader(f, delimiter='\t'):
                 yield GuideDatapoint(row)
 
