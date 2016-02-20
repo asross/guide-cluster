@@ -1,3 +1,7 @@
-from guide.data_annotator import *
+from guide.annotators import *
 
-GuideDataAnnotator('data/example_guide_data.tsv').annotate()
+bt_annotator = BowtieAnnotator('data/example_guide_data.tsv')
+bt_annotator.annotate()
+
+mf_annotator = MfoldAnnotator(bt_annotator.output_filename)
+mf_annotator.annotate()
