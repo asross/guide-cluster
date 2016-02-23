@@ -1,4 +1,4 @@
-from .helpers import output_of
+from .helpers import output_of, has_command
 from .bowtie_result import *
 
 class BowtieWrapper():
@@ -25,4 +25,7 @@ class BowtieWrapper():
         return [is_reversed, chromosome, int(index), int(multiplicity), mismatches]
 
     def search(self):
+        if not has_command('bowtie'):
+            raise Exception("Must have bowtie (1.x) installed to use BowtieWrapper")
+
         return BowtieResult(self.parse(output_of(self.search_command())))

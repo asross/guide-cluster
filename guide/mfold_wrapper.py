@@ -1,5 +1,6 @@
 import os
 from .mfold_result import *
+from .helpers import has_command
 
 class MfoldWrapper():
     def __init__(self, rna_sequence):
@@ -12,6 +13,9 @@ class MfoldWrapper():
         return 'cd /tmp && rm {}*'.format(self.rna_sequence)
 
     def fold(self):
+        if not has_command('melt.pl'):
+            raise Exception("Must have melt.pl from OligoArrayAux installed to use MfoldWrapper")
+
         os.system(self.fold_command())
         result = MfoldResult(self.parse_quantities(), self.parse_plot())
         os.system(self.clean_command())

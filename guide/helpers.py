@@ -6,6 +6,10 @@ import subprocess
 def output_of(cmd):
     return subprocess.check_output(cmd, shell=True).decode('utf-8')
 
+def has_command(cmd):
+    check_cmd = "which " + cmd + " &> /dev/null"
+    return subprocess.call(check_cmd, shell=True) == 0
+
 def neighbors(sequence):
     for i in range(len(sequence) - 1):
         yield sequence[i:i+2]
