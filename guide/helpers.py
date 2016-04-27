@@ -18,7 +18,7 @@ def to_rna(dna_sequence):
     return re.sub('T', 'U', dna_sequence)
 
 def activity(count_before, count_after):
-    count_ratio = count_before / float(count_after)
+    count_ratio = count_after / float(count_before)
     return -math.log(count_ratio, 2)
 
 assert(list(neighbors('AABB')) == ['AA', 'AB', 'BB'])
