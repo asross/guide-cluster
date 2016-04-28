@@ -25,6 +25,11 @@ class BowtieResult():
         matches = self.matches()[1:]
         return Counter(len(m.differences) for m in matches)
 
+    def same_chromosome_mismatch_counts(self):
+        matches = self.matches()
+        chromosome = matches[0].chromosome
+        return Counter(len(m.differences) for m in matches[1:] if m.chromosome == chromosome)
+
 class BowtieMatch():
     def __init__(self, match):
         self.is_reversed, self.chromosome, self.index, self.multiplicity, self.differences = match

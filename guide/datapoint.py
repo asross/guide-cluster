@@ -64,3 +64,40 @@ class GuideDatapoint():
         if not self._guide_rna:
             self._guide_rna = GuideRna(self.row['spacer_seq'])
         return self._guide_rna
+
+    # Features
+
+    # Misc.
+    def molecular_mass(self): return self.guide_rna().molecular_mass()
+    def gc_content(self): return self.guide_rna().gc_content()
+    def dna_starts_with_g(self): return int(self.row['spacer_seq'][0] == 'G')
+    def dna_starts_with_gg(self): return int(self.row['spacer_seq'][0:2] == 'GG')
+    def dna_starts_with_atg(self): return int(self.row['spacer_seq'][0:3] == 'ATG')
+    def dna_contains_gg(self): return int('GG' in self.row['spacer_seq'])
+    def dna_contains_atg(self): return int('ATG' in self.row['spacer_seq'])
+
+    # Thermodynamic quantities / physical properties
+    def nearest_neighbor_dS(self): return self.guide_rna().nearest_neighbor_dS()
+    def nearest_neighbor_dH(self): return self.guide_rna().nearest_neighbor_dH()
+    def nearest_neighbor_Tm(self): return self.guide_rna().nearest_neighbor_Tm()
+    def mfold_dS(self): return self.mfold_result().dS
+    def mfold_dH(self): return self.mfold_result().dH
+    def mfold_dG(self): return self.mfold_result().dG
+    def mfold_Tm(self): return self.mfold_result().Tm
+
+    # Hairpinning
+    def hairpin_stem_length(self): return self.mfold_result().longest_hairpin_stem_length()
+    def hairpin_loop_length(self): return self.mfold_result().longest_hairpin_loop_length()
+    def hairpin_count(self): return self.mfold_result().hairpin_count()
+
+    # Bowtie
+    def num_1_mm_bowtie_hits(self):
+        return self.bowtie_result().mismatch_counts()[1]
+    def num_1_mm_bowtie_hits_same_chromosome(self):
+        return self.bowtie_result().same_chromosome_mismatch_counts()[1]
+    def num_1_or_2_mm_bowtie_hits(self):
+        counts = self.bowtie_result().mismatch_counts()
+        return counts[1] + counts[2]
+    def num_1_or_2_mm_bowtie_hits_same_chromosome(self):
+        counts = self.bowtie_result().same_chromosome_mismatch_counts()
+        return counts[1] + counts[2]
