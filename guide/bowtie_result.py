@@ -21,6 +21,31 @@ class BowtieResult():
             if len(matches) == 1 or not matches[1].is_exact():
                 return matches[0]
 
+    def chromosome(self):
+        match = self.exact_match()
+        if match:
+            return match.chromosome
+
+    def index(self):
+        match = self.exact_match()
+        if match:
+            return match.index
+        else:
+            return -1
+
+    def chromosome_number(self):
+        chromosome = self.chromosome()
+        if chromosome:
+            index = chromosome.replace('chr', '')
+            if index == 'X':
+                return 23
+            elif index == 'Y':
+                return 24
+            else:
+                return int(index)
+        else:
+            return -1
+
     def mismatch_counts(self):
         matches = self.matches()[1:]
         return Counter(len(m.differences) for m in matches)

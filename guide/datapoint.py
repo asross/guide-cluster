@@ -88,16 +88,48 @@ class GuideDatapoint():
     # Hairpinning
     def hairpin_stem_length(self): return self.mfold_result().longest_hairpin_stem_length()
     def hairpin_loop_length(self): return self.mfold_result().longest_hairpin_loop_length()
+    def hairpin_start_index(self): return self.mfold_result().longest_hairpin_start_index()
     def hairpin_count(self): return self.mfold_result().hairpin_count()
 
     # Bowtie
-    def num_1_mm_bowtie_hits(self):
+    def bowtie_hit_chromosome(self):
+        return self.bowtie_result().chromosome_number()
+    def bowtie_hit_index(self):
+        return self.bowtie_result().index()
+    def bowtie_hits_1_mm(self):
         return self.bowtie_result().mismatch_counts()[1]
-    def num_1_mm_bowtie_hits_same_chromosome(self):
+    def bowtie_hits_same_chromosome_1_mm(self):
         return self.bowtie_result().same_chromosome_mismatch_counts()[1]
-    def num_1_or_2_mm_bowtie_hits(self):
+    def bowtie_hits_1_or_2_mms(self):
         counts = self.bowtie_result().mismatch_counts()
         return counts[1] + counts[2]
-    def num_1_or_2_mm_bowtie_hits_same_chromosome(self):
+    def bowtie_hits_same_chromosome_1_or_2_mms(self):
         counts = self.bowtie_result().same_chromosome_mismatch_counts()
         return counts[1] + counts[2]
+
+feature_units = {
+'molecular_mass':       'g/mol',
+'gc_content':           'fraction',
+'dna_starts_with_g':    'False/True',
+'dna_starts_with_gg':   'False/True',
+'dna_starts_with_atg':  'False/True',
+'dna_contains_gg':      'False/True',
+'dna_contains_atg':     'False/True',
+'nearest_neighbor_dS':  'cal/mol/K',
+'nearest_neighbor_dH':  'cal/mol',
+'nearest_neighbor_Tm':  'C',
+'mfold_dS':             'J/mol/K',
+'mfold_dH':             'kcal/mol',
+'mfold_dG':             'kcal/mol',
+'mfold_Tm':             'C',
+'hairpin_count':        '# hairpins',
+'hairpin_start_index':  'position in sequence',
+'hairpin_stem_length':  'bp',
+'hairpin_loop_length':  'bp',
+'bowtie_hit_chromosome':                    'chromosome no.',
+'bowtie_hit_index':                         'position in chromosome',
+'bowtie_hits_1_mm':                         '# hits',
+'bowtie_hits_1_or_2_mms':                   '# hits',
+'bowtie_hits_same_chromosome_1_mm':         '# hits',
+'bowtie_hits_same_chromosome_1_or_2_mms':   '# hits'
+}

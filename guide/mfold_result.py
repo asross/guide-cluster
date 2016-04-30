@@ -61,6 +61,10 @@ class MfoldResult():
         if not self.indicates_hairpin(): return 0
         return max([h.loop_length() for h in self.hairpins()])
 
+    def longest_hairpin_start_index(self):
+        if not self.indicates_hairpin(): return -1
+        return self.longest_hairpin().start_index()
+
     def hairpin_count(self):
         if not self.indicates_hairpin(): return 0
         return len(self.hairpins())

@@ -1,15 +1,25 @@
 import matplotlib.pyplot as plt
 import numpy
 import re
+from .datapoint import feature_units
 
 def activity_color(plx):
-    return (1, 1, 0.5, 0.5) if plx == 'plx' else None
+    return (0.5, 1, 0.5, 0.5) if plx == 'plx' else (0.5, 0.5, 1, 0.5)
+
+def feature_label(feature):
+    return '{} ({})'.format(feature, feature_units[feature])
+
+def feature_values(feature, points):
+    return [getattr(p, feature)() for p in points]
 
 def plot_activity(d1, d2, plx, points):
     key = 'd{}_d{}_{}_activity'.format(d1, d2, plx)
     color = activity_color(plx)
     activity = lambda p: getattr(p, key)()
     activities = numpy.array([activity(p) for p in points])
+    plt.xlabel('activity')
+    plt.ylabel('number of points')
+    plt.title(key)
     plt.hist(activities, 100, range=(-4, 4), color=color, label=key)
 
 def compare_activities(d1, d2, points, ylim=10000):
@@ -19,74 +29,57 @@ def compare_activities(d1, d2, points, ylim=10000):
     plt.ylim(0, ylim)
     plt.axvline(color='red')
     plt.title('D{} vs D{}'.format(d1, d2))
-    plt.show()
 
-# def opacify(color):
-    # opaque_color = list(color)
-    # opaque_color[3] = 1
-    # return tuple(opaque_color)
-def compare_point_groups_by(feature, point_groups, buckets=20, xrng=None):
-    fig, axis1 = plt.subplots()        
-    all_labels = []
-    all_values = []
-    min_values = []
-    max_values = []
-    title_parts = []
-    for label, points in point_groups:
-        values = [getattr(p, feature)() for p in points]
-        all_labels.append(label)
-        all_values.append(values)
-        min_values.append(min(values))
-        max_values.append(max(values))
+def compare_point_groups_by(feature, active, inactive, bins=20, xrng=None, show=False, axis1=None):
+    if axis1 is None: _fig, axis1 = plt.subplots()
+    axis2 = axis1.twinx()
+    axis1.set_xlabel(feature_label(feature))
+    active_values = feature_values(feature, active)
+    inactive_values = feature_values(feature, inactive)
 
     if xrng is None:
-        xrng = (min(min_values), max(max_values))
-    colors = [None, (1, 1, 0.5, 0.5)]
-    i = 0
-    legend_line = None
-    legend_label = None
-    avgs = []
-    axes = []
-    for label, values in zip(all_labels, all_values):
-        axis = axis1 if i == 0 else axis1.twinx()
-        axis.hist(values, buckets, range=xrng, color=colors[i], label=label)
-        avg = numpy.mean(values)
-        plt.axvline(avg, color=colors[i], ls='dashed', lw=4)
-        # axes.append(axis)
-        title_parts.append('{} (avg={})'.format(label, str(round(avg, 2))))
-        plot_line, plot_label = axis.get_legend_handles_labels()
-        if legend_line is None:
-            legend_line = plot_line
-            legend_label = plot_label
-        else:
-            legend_line += plot_line
-            legend_label += plot_label
-        i += 1
+        xmin = min(min(active_values), min(inactive_values))
+        xmax = max(max(active_values), max(inactive_values))
+        xrng = (xmin, xmax)
 
-    plt.title('{} for {} points'.format(feature, ' vs. '.join(title_parts)), fontsize=16, y=1.08)
-    plt.legend(legend_line, legend_label)
-    plt.show()
+    active_color = 'b'
+    inactive_color = (1, 1, 0.5, 0.5)
 
-gRNA_features = {
-    'molecular_mass': None,
-    'gc_content': None,
-    'dna_starts_with_g': 2,
-    'dna_starts_with_gg': 2,
-    'dna_starts_with_atg': 2,
-    'dna_contains_gg': 2,
-    'dna_contains_atg': 2,
-    'nearest_neighbor_dS': None,
-    'nearest_neighbor_dH': None,
-    'nearest_neighbor_Tm': None,
-    'mfold_dS': None,
-    'mfold_dH': None,
-    'mfold_dG': None,
-    'mfold_Tm': None,
-    'hairpin_stem_length': 10,
-    'hairpin_loop_length': 10,
-    'hairpin_count': 10,
-    'num_1_mm_bowtie_hits': 10,
-    'num_1_mm_bowtie_hits_same_chromosome': 10,
-    'num_1_or_2_mm_bowtie_hits': 10,
-    'num_1_or_2_mm_bowtie_hits_same_chromosome': 10
-}
+    axis1.set_ylabel('number of active points')
+    axis1.hist(active_values, bins, range=xrng, color=active_color, label='active')
+    axis2.set_ylabel('number of inactive points')
+    axis2.hist(inactive_values, bins, range=xrng, color=inactive_color, label='inactive')
+
+    line1, label1 = axis1.get_legend_handles_labels()
+    line2, label2 = axis2.get_legend_handles_labels()
+    plt.legend(line1 + line2, label1 + label2)
+
+    active_avg = numpy.mean(active_values)
+    inactive_avg = numpy.mean(inactive_values)
+
+    plt.axvline(active_avg, color=active_color, ls='dashed', lw=4)
+    plt.axvline(inactive_avg, color=inactive_color, ls='dashed', lw=4)
+
+    active_sym = '$\mathregular{\overline{active}}$'
+    inactive_sym = '$\mathregular{\overline{inactive}}$'
+    title = '{}, {}={}, {}={}'.format(feature, active_sym, round(active_avg, 2), inactive_sym, round(inactive_avg, 2))
+    plt.title(title)
+
+    if show:
+        plt.show()
+
+class figure_grid():
+    def __init__(self, rows, cols, title):
+        self.rows = rows
+        self.cols = cols
+        self.title = title
+        self.fig = plt.figure(figsize=(13, 3.333*self.rows))
+        
+    def __enter__(self):
+        return self.fig
+
+    def __exit__(self, type, value, traceback):
+        self.fig.suptitle(self.title, fontsize=16, fontweight='bold')
+        plt.tight_layout()
+        self.fig.subplots_adjust(top=0.80 + 0.0625*(self.rows-1))
+        plt.show()
