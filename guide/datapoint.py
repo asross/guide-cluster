@@ -78,7 +78,7 @@ class GuideDatapoint():
 
     # Thermodynamic quantities / physical properties
     def nearest_neighbor_dS(self): return self.guide_rna().nearest_neighbor_dS()
-    def nearest_neighbor_dH(self): return self.guide_rna().nearest_neighbor_dH()
+    def nearest_neighbor_dH(self): return self.guide_rna().nearest_neighbor_dH() / 1000
     def nearest_neighbor_Tm(self): return self.guide_rna().nearest_neighbor_Tm()
     def mfold_dS(self): return self.mfold_result().dS
     def mfold_dH(self): return self.mfold_result().dH
@@ -116,7 +116,7 @@ feature_units = {
 'dna_contains_gg':      'False/True',
 'dna_contains_atg':     'False/True',
 'nearest_neighbor_dS':  'cal/mol/K',
-'nearest_neighbor_dH':  'cal/mol',
+'nearest_neighbor_dH':  'kcal/mol',
 'nearest_neighbor_Tm':  'C',
 'mfold_dS':             'J/mol/K',
 'mfold_dH':             'kcal/mol',

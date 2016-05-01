@@ -69,17 +69,26 @@ def compare_point_groups_by(feature, active, inactive, bins=20, xrng=None, show=
         plt.show()
 
 class figure_grid():
+    def next_subplot(self):
+        self.subplots += 1
+        return self.fig.add_subplot(100 * self.rows + 10 * self.cols + self.subplots)
+
+    def add_subplot(self, n):
+        return self.fig.add_subplot(n)
+
     def __init__(self, rows, cols, title):
         self.rows = rows
         self.cols = cols
         self.title = title
         self.fig = plt.figure(figsize=(13, 3.333*self.rows))
+        self.subplots = 0
         
     def __enter__(self):
-        return self.fig
+        return self
 
     def __exit__(self, type, value, traceback):
         self.fig.suptitle(self.title, fontsize=16, fontweight='bold')
         plt.tight_layout()
-        self.fig.subplots_adjust(top=0.80 + 0.0625*(self.rows-1))
+        top = min([0.80 + 0.0625*(self.rows-1), 0.925])
+        self.fig.subplots_adjust(top=top)
         plt.show()
